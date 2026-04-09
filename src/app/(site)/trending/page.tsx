@@ -10,42 +10,65 @@ export default async function TrendingPage() {
 
   return (
     <div className="grid gap-8">
-      <section className="glass card">
+      <section className="glass hero-card">
         <p className="section-title">GitHub Trending</p>
-        <h1 className="mt-2 text-4xl font-semibold">趋势抓取与自动摘要</h1>
-        <p className="mt-4 max-w-3xl text-lg leading-8 text-[var(--muted)]">
-          这里展示 GitHub 趋势榜的最新抓取结果、语言分布、热度变化，以及通过大模型生成的简明解读。
-        </p>
+        <h1 className="mt-2 text-5xl font-semibold tracking-tight">趋势抓取与自动摘要</h1>
+        <div className="mt-5 grid gap-6 xl:grid-cols-[1.2fr_0.85fr]">
+          <p className="max-w-3xl text-lg leading-8 text-[var(--muted)]">
+            这里不是单纯的榜单页，而是一块持续更新的趋势专栏。抓取、基础分析和 AI 摘要共同组成“最近值得关注什么”的内容视图。
+          </p>
+          <div className="rounded-[28px] border border-[var(--line)] bg-white/76 p-6">
+            <p className="section-title">阅读提示</p>
+            <div className="mt-4 grid gap-3">
+              {[
+                "先看 AI 摘要，再看上榜仓库和图表。",
+                "如果 AI 摘要失败，原始趋势数据仍然可用。",
+                "历史快照会被保留下来，方便横向回看。",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-2xl border border-[var(--line)] bg-[var(--paper-strong)] px-4 py-3 text-sm leading-7 text-[var(--muted)]"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       {current ? (
         <>
-          <section className="glass card">
+          <section className="glass feature-card">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="section-title">Latest Snapshot</p>
-                <h2 className="mt-2 text-3xl font-semibold">最近一次抓取</h2>
+                <h2 className="mt-2 text-3xl font-semibold">本期观察</h2>
               </div>
-              <span className="text-sm text-[var(--muted)]">{formatDate(current.sourceDate)}</span>
+              <span className="rounded-full border border-[var(--line)] px-3 py-1 text-sm text-[var(--muted)]">
+                {formatDate(current.sourceDate)}
+              </span>
             </div>
-            <div className="mt-6 grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
-              <div>
-                <div className="rounded-3xl border border-[var(--line)] bg-white/75 p-5">
-                  <p className="text-sm text-[var(--muted)]">AI 自动摘要</p>
-                  <p className="mt-3 whitespace-pre-line leading-8 text-[var(--muted)]">
+            <div className="mt-6 grid gap-8 xl:grid-cols-[0.98fr_1.02fr]">
+              <div className="grid gap-5">
+                <div className="rounded-[30px] border border-[var(--line)] bg-white/78 p-6">
+                  <p className="section-title">AI 自动摘要</p>
+                  <p className="mt-4 whitespace-pre-line leading-8 text-[var(--muted)]">
                     {current.summary?.editedSummary ||
                       current.summary?.aiSummary ||
                       "本次抓取尚未生成摘要，但基础统计和仓库排行已经可见。"}
                   </p>
                 </div>
-                <div className="mt-6 grid gap-4">
+                <div className="grid gap-4">
                   {current.repos.slice(0, 10).map((repo) => (
-                    <article key={repo.id} className="rounded-3xl border border-[var(--line)] bg-white/75 p-5">
+                    <article key={repo.id} className="editorial-card">
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <p className="text-sm text-[var(--muted)]">#{repo.rank}</p>
-                          <h3 className="text-xl font-semibold">{repo.repoFullName}</h3>
-                          <p className="mt-2 text-[var(--muted)]">{repo.description}</p>
+                          <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
+                            Rank #{repo.rank}
+                          </p>
+                          <h3 className="mt-2 text-xl font-semibold tracking-tight">{repo.repoFullName}</h3>
+                          <p className="mt-3 leading-7 text-[var(--muted)]">{repo.description}</p>
                         </div>
                         <div className="text-right text-sm text-[var(--muted)]">
                           <p>{repo.language || "Unknown"}</p>
@@ -56,26 +79,52 @@ export default async function TrendingPage() {
                   ))}
                 </div>
               </div>
-              <TrendChartsPanel
-                languages={current.analytics.topLanguages}
-                repos={current.analytics.topRepos}
-              />
+              <div className="grid gap-6">
+                <section className="glass card">
+                  <p className="section-title">快照指标</p>
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl border border-[var(--line)] bg-white/80 p-4">
+                      <p className="text-sm text-[var(--muted)]">仓库数</p>
+                      <p className="mt-1 text-3xl font-semibold">{current.analytics.totalRepos}</p>
+                    </div>
+                    <div className="rounded-2xl border border-[var(--line)] bg-white/80 p-4">
+                      <p className="text-sm text-[var(--muted)]">Star 增量</p>
+                      <p className="mt-1 text-3xl font-semibold">{current.analytics.totalStarsGained}</p>
+                    </div>
+                    <div className="rounded-2xl border border-[var(--line)] bg-white/80 p-4">
+                      <p className="text-sm text-[var(--muted)]">平均热度</p>
+                      <p className="mt-1 text-3xl font-semibold">{current.analytics.averageStarsGained}</p>
+                    </div>
+                    <div className="rounded-2xl border border-[var(--line)] bg-white/80 p-4">
+                      <p className="text-sm text-[var(--muted)]">摘要状态</p>
+                      <p className="mt-1 text-lg font-semibold">{current.summary?.status || "NO_SUMMARY"}</p>
+                    </div>
+                  </div>
+                </section>
+                <TrendChartsPanel
+                  languages={current.analytics.topLanguages}
+                  repos={current.analytics.topRepos}
+                />
+              </div>
             </div>
           </section>
 
-          <section className="glass card">
+          <section className="glass feature-card">
             <p className="section-title">Archive</p>
             <h2 className="mt-2 text-2xl font-semibold">最近抓取记录</h2>
             <div className="mt-6 grid gap-4">
               {archive.map((item) => (
-                <article key={item.id} className="rounded-3xl border border-[var(--line)] bg-white/75 p-5">
+                <article key={item.id} className="editorial-card">
                   <div className="flex flex-wrap items-center justify-between gap-4">
-                    <h3 className="text-xl font-semibold">{formatDate(item.sourceDate)}</h3>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">Archive Snapshot</p>
+                      <h3 className="mt-2 text-xl font-semibold">{formatDate(item.sourceDate)}</h3>
+                    </div>
                     <span className="text-sm text-[var(--muted)]">
                       {item.repos.length} repos · {item.summary?.status || "NO_SUMMARY"}
                     </span>
                   </div>
-                  <p className="mt-3 text-[var(--muted)]">
+                  <p className="mt-4 leading-8 text-[var(--muted)]">
                     {item.summary?.editedSummary || item.summary?.aiSummary || "暂无摘要"}
                   </p>
                 </article>
