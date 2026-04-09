@@ -1,36 +1,142 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Blog
 
-## Getting Started
+一个可 Docker 部署的个人博客，包含：
 
-First, run the development server:
+- GitHub 趋势榜抓取与基础分析
+- 富文本文章发布
+- 匿名评论
+- 成果案例展示
+- 单管理员后台
+
+## 已实现能力
+
+- `首页`
+  - 个人简介
+  - 最新趋势摘要
+  - 最新文章
+  - 精选案例
+  - 最新评论
+- `文章系统`
+  - 富文本编辑
+  - 草稿 / 发布
+  - 分类 / 标签
+- `案例系统`
+  - 富文本编辑
+  - 技术栈 / 截图 / 外链
+  - 精选标记
+- `趋势系统`
+  - GitHub Trending 抓取
+  - 趋势快照入库
+  - 语言分布 / Star 增量分析
+  - AI 摘要结构
+  - 抓取失败时 graceful fallback
+- `评论系统`
+  - 匿名直接发布
+  - 限流 / honeypot / 敏感词
+  - 后台隐藏评论
+- `后台`
+  - 登录
+  - 文章管理
+  - 案例管理
+  - 趋势任务与摘要修订
+  - 评论管理
+  - 站点设置
+- `SEO`
+  - `robots.txt`
+  - `sitemap.xml`
+  - `rss.xml`
+
+## 技术栈
+
+- Next.js 16 App Router
+- React 19
+- Prisma 6
+- PostgreSQL
+- Redis
+- Tiptap
+- Recharts
+- Docker Compose
+
+## 本地开发
+
+1. 安装依赖
+
+```bash
+npm install
+```
+
+2. 启动数据库和 Redis
+
+```bash
+docker compose up -d db redis
+```
+
+3. 初始化数据库
+
+```bash
+npm run db:push
+```
+
+4. 启动开发服务器
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. 可选：手动抓一次趋势
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run worker:once
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Docker 运行
 
-## Learn More
+```bash
+docker compose up --build
+```
 
-To learn more about Next.js, take a look at the following resources:
+默认暴露端口：
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Web: `http://localhost:3000`
+- PostgreSQL: `localhost:5432`
+- Redis: `localhost:6379`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 环境变量
 
-## Deploy on Vercel
+参考 `.env.example`。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+本地默认 `.env` 已配置为：
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/personal_blog?schema=public`
+- `REDIS_URL=redis://localhost:6379`
+- `APP_URL=http://localhost:3000`
+
+Docker 内部连接地址由 `docker-compose.yml` 自动覆盖为 `db` 和 `redis` 服务名。
+
+## 后台登录
+
+默认凭据来自 `.env`：
+
+- 用户名：`ADMIN_USERNAME`
+- 密码：`ADMIN_PASSWORD`
+
+当前默认值：
+
+- `admin`
+- `change-me`
+
+第一次使用前建议改掉。
+
+## 测试与构建
+
+```bash
+npm run lint
+npm test
+npm run build
+```
+
+## 当前限制
+
+- AI 摘要需要配置 `OPENAI_API_KEY`
+- 媒体上传底层已准备，本轮后台表单仍以 URL 输入为主
+- 趋势抓取来自 GitHub 页面解析，页面结构变化时需要跟进调整
