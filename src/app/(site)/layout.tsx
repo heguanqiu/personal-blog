@@ -23,11 +23,14 @@ export default async function SiteLayout({
     <div className="pb-16">
       <header className="shell pt-6">
         <div className="glass card flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-          <div>
+          <div className="max-w-xl">
             <p className="section-title">Personal Data Blog</p>
-            <Link href="/" className="mt-2 block text-2xl font-semibold tracking-tight">
+            <Link href="/" className="mt-2 block text-[1.85rem] font-semibold tracking-tight">
               {settings?.seoDefaults.title ?? "Personal Blog"}
             </Link>
+            <p className="mt-2 text-sm leading-7 text-[var(--muted)]">
+              一个更像个人编辑部的博客：观察趋势、发布文章、整理案例，并把交流留在现场。
+            </p>
           </div>
           <nav className="flex flex-wrap items-center gap-4 text-sm">
             {navigation.map((item) => (
@@ -35,8 +38,8 @@ export default async function SiteLayout({
                 {item.label}
               </Link>
             ))}
-            <Link href="/admin" className="btn btn-secondary text-sm">
-              管理后台
+            <Link href="/admin" className="rounded-full border border-[var(--line)] px-4 py-2 text-sm text-[var(--muted)] transition hover:bg-white">
+              Studio
             </Link>
           </nav>
         </div>
@@ -44,8 +47,8 @@ export default async function SiteLayout({
       <main className="shell mt-8">{children}</main>
       <footer className="shell mt-10">
         <div className="glass card flex flex-col gap-3 text-sm text-[var(--muted)] md:flex-row md:items-center md:justify-between">
-          <p>一个把趋势、文章、案例和留言放在一起的个人博客。</p>
-          <p>Docker 友好，自托管优先，内容与数据并重。</p>
+          <p>一个把趋势、文章、案例和留言放在一起的个人编辑空间。</p>
+          <p>暖纸色背景、强人格侧栏、高信息密度内容流。</p>
         </div>
       </footer>
     </div>

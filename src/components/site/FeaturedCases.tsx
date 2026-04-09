@@ -10,7 +10,7 @@ type CaseItem = {
 
 export function FeaturedCases({ cases }: { cases: CaseItem[] }) {
   return (
-    <section className="glass card">
+    <section className="glass feature-card">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <p className="section-title">成果案例</p>
@@ -22,14 +22,17 @@ export function FeaturedCases({ cases }: { cases: CaseItem[] }) {
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         {cases.length ? (
-          cases.map((item) => (
+          cases.map((item, index) => (
             <Link
               key={item.id}
               href={`/cases/${item.slug}`}
-              className="rounded-3xl border border-[var(--line)] bg-white/75 p-5"
+              className="editorial-card min-h-64"
             >
-              <h3 className="text-xl font-semibold">{item.title}</h3>
-              <p className="mt-3 line-clamp-3 text-[var(--muted)]">{item.summary}</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
+                Case {String(index + 1).padStart(2, "0")}
+              </p>
+              <h3 className="mt-2 text-2xl font-semibold tracking-tight">{item.title}</h3>
+              <p className="mt-4 line-clamp-4 leading-8 text-[var(--muted)]">{item.summary}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {item.techStack.slice(0, 4).map((tech) => (
                   <span key={tech} className="tag">

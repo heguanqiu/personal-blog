@@ -8,11 +8,12 @@ type PostItem = {
   slug: string;
   summary: string;
   publishedAt: Date | null;
+  tags?: string[];
 };
 
 export function LatestPosts({ posts }: { posts: PostItem[] }) {
   return (
-    <section className="glass card">
+    <section className="glass feature-card">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <p className="section-title">最新文章</p>
@@ -24,17 +25,31 @@ export function LatestPosts({ posts }: { posts: PostItem[] }) {
       </div>
       <div className="grid gap-4">
         {posts.length ? (
-          posts.map((post) => (
+          posts.map((post, index) => (
             <Link
               key={post.id}
               href={`/articles/${post.slug}`}
-              className="rounded-3xl border border-[var(--line)] bg-white/75 p-5 transition hover:-translate-y-0.5"
+              className="editorial-card"
             >
-              <div className="flex items-center justify-between gap-4">
-                <h3 className="text-xl font-semibold">{post.title}</h3>
+              <div className="flex items-start justify-between gap-4">
+                <div className="max-w-3xl">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
+                    Article {String(index + 1).padStart(2, "0")}
+                  </p>
+                  <h3 className="mt-2 text-2xl font-semibold tracking-tight">{post.title}</h3>
+                </div>
                 <span className="text-sm text-[var(--muted)]">{formatDate(post.publishedAt)}</span>
               </div>
-              <p className="mt-3 line-clamp-2 text-[var(--muted)]">{post.summary}</p>
+              <p className="mt-4 line-clamp-3 max-w-3xl leading-8 text-[var(--muted)]">{post.summary}</p>
+              {post.tags?.length ? (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {post.tags.slice(0, 3).map((tag) => (
+                    <span key={tag} className="tag">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
             </Link>
           ))
         ) : (
