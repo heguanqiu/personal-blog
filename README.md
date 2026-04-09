@@ -89,6 +89,19 @@ npm run dev
 npm run worker:once
 ```
 
+6. 初始化默认内容
+
+```bash
+npm run seed:default
+```
+
+会写入：
+
+- 一套默认站点设置
+- 1 篇示例文章
+- 1 个示例案例
+- 3 条示例留言 / 评论
+
 ## Docker 运行
 
 ```bash

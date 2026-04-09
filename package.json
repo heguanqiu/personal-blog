@@ -11,6 +11,7 @@
     "test:watch": "vitest",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
+    "seed:default": "tsx scripts/seed-default-content.ts",
     "worker": "tsx scripts/worker.ts",
     "worker:once": "tsx scripts/run-trending-once.ts"
   },
