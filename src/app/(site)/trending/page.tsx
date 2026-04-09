@@ -1,6 +1,7 @@
 import { formatDate } from "@/lib/utils";
 import { getTrendingArchive } from "@/server/trending/service";
 import { TrendChartsPanel } from "@/components/charts/TrendChartsPanel";
+import { TrendSnapshotOverview } from "@/components/charts/TrendSnapshotOverview";
 
 export const dynamic = "force-dynamic";
 
@@ -80,27 +81,15 @@ export default async function TrendingPage() {
                 </div>
               </div>
               <div className="grid gap-6">
-                <section className="glass card">
-                  <p className="section-title">快照指标</p>
-                  <div className="mt-4 grid grid-cols-2 gap-3">
-                    <div className="rounded-2xl border border-[var(--line)] bg-white/80 p-4">
-                      <p className="text-sm text-[var(--muted)]">仓库数</p>
-                      <p className="mt-1 text-3xl font-semibold">{current.analytics.totalRepos}</p>
-                    </div>
-                    <div className="rounded-2xl border border-[var(--line)] bg-white/80 p-4">
-                      <p className="text-sm text-[var(--muted)]">Star 增量</p>
-                      <p className="mt-1 text-3xl font-semibold">{current.analytics.totalStarsGained}</p>
-                    </div>
-                    <div className="rounded-2xl border border-[var(--line)] bg-white/80 p-4">
-                      <p className="text-sm text-[var(--muted)]">平均热度</p>
-                      <p className="mt-1 text-3xl font-semibold">{current.analytics.averageStarsGained}</p>
-                    </div>
-                    <div className="rounded-2xl border border-[var(--line)] bg-white/80 p-4">
-                      <p className="text-sm text-[var(--muted)]">摘要状态</p>
-                      <p className="mt-1 text-lg font-semibold">{current.summary?.status || "NO_SUMMARY"}</p>
-                    </div>
-                  </div>
-                </section>
+                <TrendSnapshotOverview
+                  metrics={[
+                    { label: "仓库数", value: String(current.analytics.totalRepos) },
+                    { label: "Star 增量", value: String(current.analytics.totalStarsGained) },
+                    { label: "平均热度", value: String(current.analytics.averageStarsGained) },
+                    { label: "摘要状态", value: current.summary?.status || "NO_SUMMARY" },
+                  ]}
+                  languages={current.analytics.topLanguages}
+                />
                 <TrendChartsPanel
                   languages={current.analytics.topLanguages}
                   repos={current.analytics.topRepos}
@@ -133,7 +122,7 @@ export default async function TrendingPage() {
           </section>
         </>
       ) : (
-        <section className="glass card">
+        <section className="glass feature-card">
           <p className="text-[var(--muted)]">还没有趋势数据。请先启动 worker，或在后台手动触发抓取。</p>
         </section>
       )}

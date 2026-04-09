@@ -34,7 +34,7 @@ export function TrendChartsPanel({
   repos: Array<{ name: string; starsGained: number }>;
 }) {
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-5">
       <TrendLanguageChartClient data={languages} />
       <TrendTopRepoChartClient data={repos} />
     </div>

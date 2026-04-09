@@ -2,6 +2,8 @@ import { CommentTargetType } from "@prisma/client";
 import { notFound } from "next/navigation";
 
 import { CommentForm } from "@/components/comments/CommentForm";
+import { CommentConversation } from "@/components/site/CommentConversation";
+import { EditorialDetailHero } from "@/components/site/EditorialDetailHero";
 import { formatDate } from "@/lib/utils";
 import { listVisibleComments } from "@/server/comments/service";
 import { getPostBySlug } from "@/server/content/posts";
@@ -24,41 +26,69 @@ export default async function ArticleDetailPage({
 
   return (
     <div className="grid gap-8">
-      <article className="glass card">
-        <p className="section-title">Article</p>
-        <h1 className="mt-2 text-4xl font-semibold">{post.title}</h1>
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-[var(--muted)]">
-          <span>{formatDate(post.publishedAt)}</span>
-          {post.category ? <span className="tag">{post.category.name}</span> : null}
-          {post.tags.map((tag) => (
-            <span key={tag.tagId} className="tag">
-              {tag.tag.name}
-            </span>
-          ))}
-        </div>
-        <p className="mt-6 text-lg text-[var(--muted)]">{post.summary}</p>
-        <div className="prose-html mt-8" dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
-      </article>
+      <EditorialDetailHero
+        eyebrow="Article"
+        title={post.title}
+        summary={post.summary}
+        badges={[
+          ...(post.category ? [post.category.name] : []),
+          ...post.tags.map((tag) => tag.tag.name),
+        ]}
+        metaItems={[formatDate(post.publishedAt), "公开写作", `${comments.length} 条评论`]}
+      />
 
-      <section className="glass card">
-        <p className="section-title">评论区</p>
-        <h2 className="mt-2 text-2xl font-semibold">读者在这里留下痕迹</h2>
-        <div className="mt-6 grid gap-4">
-          {comments.length ? (
-            comments.map((comment) => (
-              <article key={comment.id} className="rounded-3xl border border-[var(--line)] bg-white/75 p-5">
-                <div className="flex items-center justify-between gap-4">
-                  <h3 className="font-semibold">{comment.nickname}</h3>
-                  <span className="text-sm text-[var(--muted)]">{formatDate(comment.createdAt)}</span>
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
+        <article className="glass feature-card">
+          <div className="prose-html" dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
+        </article>
+
+        <aside className="grid gap-5 xl:sticky xl:top-6">
+          <section className="glass card">
+            <p className="section-title">阅读侧记</p>
+            <div className="mt-4 grid gap-3">
+              {[
+                "这里适合放更完整的观察，而不是碎片动态。",
+                "如果你读完有反馈，直接在下方匿名留言即可。",
+                "标签和分类会帮助你回到同类文章。",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="rounded-2xl border border-[var(--line)] bg-[var(--paper-strong)] px-4 py-3 text-sm leading-7 text-[var(--muted)]"
+                >
+                  {item}
                 </div>
-                <p className="mt-3 text-[var(--muted)]">{comment.content}</p>
-              </article>
-            ))
-          ) : (
-            <p className="text-[var(--muted)]">还没有评论。</p>
-          )}
-        </div>
-      </section>
+              ))}
+            </div>
+          </section>
+          <section className="glass card">
+            <p className="section-title">文章信息</p>
+            <div className="mt-4 grid gap-3 text-sm text-[var(--muted)]">
+              <div className="rounded-2xl border border-[var(--line)] bg-white/70 px-4 py-3">
+                发布时间：{formatDate(post.publishedAt)}
+              </div>
+              {post.category ? (
+                <div className="rounded-2xl border border-[var(--line)] bg-white/70 px-4 py-3">
+                  分类：{post.category.name}
+                </div>
+              ) : null}
+              <div className="rounded-2xl border border-[var(--line)] bg-white/70 px-4 py-3">
+                标签：{post.tags.map((tag) => tag.tag.name).join(" · ") || "未设置"}
+              </div>
+            </div>
+          </section>
+        </aside>
+      </div>
+
+      <CommentConversation
+        title="评论区"
+        subtitle="读者在这里留下痕迹"
+        comments={comments.map((comment) => ({
+          id: comment.id,
+          nickname: comment.nickname,
+          content: comment.content,
+          createdAtLabel: formatDate(comment.createdAt),
+        }))}
+      />
 
       <CommentForm targetType="POST" targetId={post.id} />
     </div>

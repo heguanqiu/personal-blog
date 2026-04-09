@@ -215,3 +215,44 @@ a {
 .nav-link:hover {
   color: var(--ink);
 }
+
+@media (max-width: 1024px) {
+  .shell {
+    width: min(100vw - 28px, 100%);
+  }
+
+  .hero-card {
+    padding: 24px;
+    border-radius: 30px;
+  }
+
+  .feature-card {
+    padding: 22px;
+    border-radius: 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    width: min(100vw - 22px, 100%);
+  }
+
+  .card,
+  .feature-card,
+  .hero-card,
+  .editorial-card,
+  .studio-card {
+    padding: 18px;
+    border-radius: 24px;
+  }
+
+  .hero-title {
+    font-size: clamp(2.1rem, 10vw, 3.3rem);
+    line-height: 1.02;
+  }
+
+  .section-title {
+    font-size: 0.82rem;
+    letter-spacing: 0.16em;
+  }
+}
